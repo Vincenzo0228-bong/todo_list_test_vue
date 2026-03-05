@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To-Do List with Real-Time Updates</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <div class="container">
+      <h1>To-Do List</h1>
+      <p class="subtitle">Real-time updates enabled</p>
+      
+      <div class="add-task-section">
+        <input 
+          type="text" 
+          v-model="newTaskTitle" 
+          @keyup.enter="addTask"
+          placeholder="Enter a new task..."
+          class="task-input"
+        >
+        <button @click="addTask" class="add-button" :disabled="isAdding">
+          {{ isAdding ? 'Adding...' : 'Add Task' }}
+        </button>
+      </div>
+
+      <div v-if="error" class="error-message">
+        {{ error }}
+      </div>
+
+      <div v-if="tasks.length === 0 && !isLoading" class="empty-state">
+        No tasks yet. Add one above!
+      </div>
+
+      <div v-if="isLoading" class="loading">
+        Loading tasks...
+      </div>
+
+      <ul class="task-list">
+        <li 
+          v-for="task in tasks" 
+          :key="task._id" 
+          class="task-item"
+          :class="{ 'task-completed': task.status === 'completed' }"
+        >
+          <div class="task-content">
+            <input 
+              type="checkbox" 
+              :checked="task.status === 'completed'"
+              @change="toggleTaskStatus(task)"
+              class="task-checkbox"
+              :disabled="updatingTaskIds.has(task._id)"
+            >
+            <span class="task-title">{{ task.title }}</span>
+          </div>
+          <span class="task-date">{{ formatDate(task.createdAt) }}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Vue 2 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <!-- Axios CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <!-- Socket.IO CDN -->
+  <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+  <!-- Main Vue App -->
+  <script src="main.js"></script>
+</body>
+</html>
